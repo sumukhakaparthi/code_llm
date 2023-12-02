@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 
 serviceAccountKey.json
+try_for_exp.ipynb
