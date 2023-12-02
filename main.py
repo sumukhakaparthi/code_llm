@@ -11,12 +11,37 @@ import pyrebase
 
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import queue
+from multiprocessing import get_context
+from concurrent.futures.process import ProcessPoolExecutor
+
+import asyncio
+from concurrent.futures.process import ProcessPoolExecutor
+from contextlib import asynccontextmanager
+
+
+ctx = get_context("spawn")
+pool = ProcessPoolExecutor(mp_context=ctx)
+
 from dotenv import load_dotenv
 load_dotenv()
 
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.state.executor = ProcessPoolExecutor()
+    yield
+    app.state.executor.shutdown()
+
 app = FastAPI(
-    title="Program Generator"
+    title="Program Generator",
+    lifespan=lifespan
 )
+
+#server ok status display
+@app.get("/")
+async def root():
+    return {"message":"Server OK"}
 
 #importing variables
 FIREBASE_WEB_API_KEY = os.environ.get("fbapiKey")
@@ -104,17 +129,17 @@ def get_prediction():
     
     return decoded_prediction
 
-@app.get("/")
-async def root():
-    return {"message":"Server OK"}
 
 @app.post("/predict/")
 async def predict(data: iputData, current_user=Depends(get_current_user)):
     prediction_queue.put(data.text)
-    return get_prediction()
+    loop = asyncio.get_event_loop()
+    return await loop.run_in_executor(
+                                    pool,
+                                    get_prediction
+                                )
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
-
 
 
