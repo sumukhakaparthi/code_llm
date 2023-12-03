@@ -30,7 +30,7 @@ with st.form(key ='Form1'):
         submitted1 = st.form_submit_button(label = 'Submit and Index')
         
         if submitted1:
-            if len(st.session_state.token) > 900 and st.session_state.csv != None and st.session_state.dd_text != None:
+            if len(st.session_state.token) > 900: #and st.session_state.csv != None and st.session_state.dd_text != None:
                 #Index into chroma vector db
                 #
                 #
