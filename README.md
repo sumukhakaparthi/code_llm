@@ -1,5 +1,5 @@
 # code_llm
-FastAPI Application to Serve a Pre-Built ‘CodeLLM Model’ with Firebase Authentication”
+FastAPI Application to Serve a Pre-Built ‘LLM Model’ with Firebase Authentication”
 
 ## Some links
 Firebase rest api url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword'
